@@ -25,7 +25,7 @@ besmin <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch]
 
 ### Contoh Penggunaan
 
-1. Build file JavaScript ke format CommonJS (CJS):
+1. Build file JavaScript/TypeScript ke format CommonJS (CJS):
    ```bash
    besmin src dist cjs
    ```
@@ -50,18 +50,11 @@ Jika mode `--watch` diaktifkan, `besmin` akan memantau perubahan di direktori in
 
 - [**fs-extra**](https://github.com/jprichardson/node-fs-extra): Operasi file yang diperluas.
 - [**@babel/core**](https://babel.dev/): Alat transformasi kode modern.
-- [**@babel/preset-env**](https://babel.dev/docs/en/babel-preset-env): Preset untuk mendukung target lingkungan tertentu.
-- [**@babel/plugin-transform-modules-commonjs**](https://babel.dev/docs/en/babel-plugin-transform-modules-commonjs): Plugin untuk mendukung CommonJS.
-- [**@babel/plugin-transform-modules-umd**](https://babel.dev/docs/en/babel-plugin-transform-modules-umd): Plugin untuk mendukung UMD.
-- [**@babel/plugin-transform-modules-amd**](https://babel.dev/docs/en/babel-plugin-transform-modules-amd): Plugin untuk mendukung AMD.
-- [**@babel/plugin-transform-modules-systemjs**](https://babel.dev/docs/en/babel-plugin-transform-modules-systemjs): Plugin untuk mendukung SystemJS.
+- [**@babel/preset-env**](https://babel.dev/docs/babel-preset-env): Preset untuk mendukung target lingkungan tertentu.
+- [**@babel/preset-typescript**](https://babel.dev/docs/babel-preset-typescript): Preset untuk mendukung TypeScript.
+- [**@babel/plugin-transform-modules-commonjs**](https://babel.dev/docs/babel-plugin-transform-modules-commonjs): Plugin untuk mendukung CommonJS.
+- [**@babel/plugin-transform-modules-umd**](https://babel.dev/docs/babel-plugin-transform-modules-umd): Plugin untuk mendukung UMD.
+- [**@babel/plugin-transform-modules-amd**](https://babel.dev/docs/babel-plugin-transform-modules-amd): Plugin untuk mendukung AMD.
+- [**@babel/plugin-transform-modules-systemjs**](https://babel.dev/docs/babel-plugin-transform-modules-systemjs): Plugin untuk mendukung SystemJS.
 - [**terser**](https://terser.org/): Minifikasi kode JavaScript.
 - [**chokidar**](https://github.com/paulmillr/chokidar): Pemantauan file dan direktori.
-
-## Donasi
-
-[Ko-fi](https://ko-fi.com/salmantok)
-
-## Lisensi
-
-[MIT](LICENSE)

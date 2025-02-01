@@ -1,7 +1,7 @@
 {
   "name": "besmin",
   "version": "0.0.1",
-  "description": "",
+  "description": "Build ECMAScript Minify",
   "main": "./dist/esm/besmin.js",
   "bin": {
     "besmin": "./dist/esm/besmin.js"
@@ -28,6 +28,7 @@
     "@babel/plugin-transform-modules-systemjs": "^7.25.9",
     "@babel/plugin-transform-modules-umd": "^7.25.9",
     "@babel/preset-env": "^7.26.0",
+    "@babel/preset-typescript": "^7.26.0",
     "chokidar": "^4.0.3",
     "fs-extra": "^11.2.0",
     "terser": "^5.37.0"

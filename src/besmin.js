@@ -1,14 +1,15 @@
 #!/usr/bin/env node
-import path from 'path'
-import chokidar from 'chokidar'
-import fs from 'fs-extra'
-import presetEnv from '@babel/preset-env'
-import transformModulesAmd from '@babel/plugin-transform-modules-amd'
-import transformModulesCommonjs from '@babel/plugin-transform-modules-commonjs'
-import transformModulesSystemjs from '@babel/plugin-transform-modules-systemjs'
-import transformModulesUmd from '@babel/plugin-transform-modules-umd'
-import { minify } from 'terser'
-import { transformSync } from '@babel/core'
+import path from 'path';
+import chokidar from 'chokidar';
+import fs from 'fs-extra';
+import presetEnv from '@babel/preset-env';
+import presetTypescript from '@babel/preset-typescript';
+import transformModulesAmd from '@babel/plugin-transform-modules-amd';
+import transformModulesCommonjs from '@babel/plugin-transform-modules-commonjs';
+import transformModulesSystemjs from '@babel/plugin-transform-modules-systemjs';
+import transformModulesUmd from '@babel/plugin-transform-modules-umd';
+import { minify } from 'terser';
+import { transformSync } from '@babel/core';
 
 async function processFile(
   inputPath,
@@ -17,132 +18,158 @@ async function processFile(
   isInputPath = false
 ) {
   try {
-    const code = await fs.readFile(inputPath, 'utf-8')
+    const code = await fs.readFile(inputPath, 'utf-8');
     const babelOptions = {
       esm: {
-        presets: [[presetEnv, { modules: false, targets: '> 0.5%, not dead' }]],
+        presets: [
+          [presetEnv, { modules: false, targets: '> 0.5%, not dead' }],
+          presetTypescript,
+        ],
       },
       cjs: {
-        presets: [[presetEnv, { modules: false, targets: '> 0.5%, not dead' }]],
+        presets: [
+          [presetEnv, { modules: false, targets: '> 0.5%, not dead' }],
+          presetTypescript,
+        ],
         plugins: [[transformModulesCommonjs]],
       },
       sysjs: {
-        presets: [[presetEnv, { modules: false, targets: '> 0.5%, not dead' }]],
+        presets: [
+          [presetEnv, { modules: false, targets: '> 0.5%, not dead' }],
+          presetTypescript,
+        ],
         plugins: [[transformModulesSystemjs]],
       },
       amd: {
-        presets: [[presetEnv, { modules: false, targets: '> 0.5%, not dead' }]],
+        presets: [
+          [presetEnv, { modules: false, targets: '> 0.5%, not dead' }],
+          presetTypescript,
+        ],
         plugins: [[transformModulesAmd]],
       },
       umd: {
-        presets: [[presetEnv, { modules: false, targets: '> 0.5%, not dead' }]],
+        presets: [
+          [presetEnv, { modules: false, targets: '> 0.5%, not dead' }],
+          presetTypescript,
+        ],
         plugins: [[transformModulesUmd]],
       },
-    }[moduleType]
+    }[moduleType];
     const transformed = transformSync(code, {
       ...babelOptions,
+      filename: inputPath,
       sourceMaps: true,
-    })
-    const minified = await minify(transformed.code, { sourceMap: true })
+    });
+    const minified = await minify(transformed.code, { sourceMap: true });
 
     !isInputPath
       ? (await fs.outputFile(outputPath, minified.code, 'utf-8'),
         minified.map &&
           (await fs.outputFile(`${outputPath}.map`, minified.map)),
         console.log(`✔ Output Ok: ${outputPath}`))
-      : null
+      : null;
   } catch (err) {}
 }
 
 async function syntaxWithBabel(inputPath) {
   try {
-    const code = await fs.readFile(inputPath, 'utf-8')
+    const code = await fs.readFile(inputPath, 'utf-8');
     const transformed = transformSync(code, {
-      presets: [[presetEnv, { targets: '> 0.5%' }]],
-    })
-    transformed?.code ? console.log(`✔ Input OK: ${inputPath}`) : null
+      presets: [[presetEnv, { targets: '> 0.5%' }], '@babel/preset-typescript'],
+      filename: inputPath, // Tambahkan opsi filename di sini
+    });
+    transformed?.code ? console.log(`✔ Input OK: ${inputPath}`) : null;
   } catch (err) {
-    console.error(`❌ Input error: ${inputPath}`)
-    console.error(err.message)
+    console.error(`❌ Input error: ${inputPath}`);
+    console.error(err.message);
   }
 }
 
 async function validateFiles(inputDir) {
-  const files = await fs.readdir(inputDir)
+  const files = await fs.readdir(inputDir);
   for (const file of files) {
-    const inputPath = path.join(inputDir, file)
-    const stats = await fs.stat(inputPath)
+    const inputPath = path.join(inputDir, file);
+    const stats = await fs.stat(inputPath);
 
-    stats.isDirectory()
-      ? await validateFiles(inputPath)
-      : stats.isFile() && path.extname(file) === '.js'
-        ? await syntaxWithBabel(inputPath)
-        : null
+    if (stats.isDirectory()) {
+      await validateFiles(inputPath);
+    } else if (stats.isFile() && ['.js', '.ts'].includes(path.extname(file))) {
+      await syntaxWithBabel(inputPath);
+    }
   }
 }
 
 async function buildFiles(inputDir, outputDir, moduleType) {
-  const files = await fs.readdir(inputDir)
+  const files = await fs.readdir(inputDir);
   for (const file of files) {
-    const inputPath = path.join(inputDir, file)
-    const outputPath = path.join(outputDir, file)
-    const stats = await fs.stat(inputPath)
+    const inputPath = path.join(inputDir, file);
+    const outputPath = path.join(outputDir, file.replace(/\.ts$/, '.js'));
+    const stats = await fs.stat(inputPath);
 
-    stats.isDirectory()
-      ? await buildFiles(inputPath, outputPath, moduleType)
-      : stats.isFile() && path.extname(file) === '.js'
-        ? await processFile(inputPath, outputPath, moduleType, false)
-        : null
+    if (stats.isDirectory()) {
+      await buildFiles(inputPath, outputPath, moduleType);
+    } else if (stats.isFile() && ['.js', '.ts'].includes(path.extname(file))) {
+      await processFile(inputPath, outputPath, moduleType, false);
+    }
   }
 }
 
 async function watchAndBuild(inputDir, outputDir, moduleTypes) {
-  const watcher = chokidar.watch(inputDir, { ignored: /(^|[\/\\])\../ })
-  console.log(`👀 Watching: ${inputDir}`)
+  const watcher = chokidar.watch(inputDir, {
+    ignored: /(^|[\/\\])\../,
+    persistent: true,
+  });
+  console.log(`👀 Watching: ${inputDir}`);
 
   watcher.on('change', async (filePath) => {
-    console.log(`🔄 Changed: ${filePath}`)
-    const relativePath = path.relative(inputDir, filePath)
+    if (!['.js', '.ts'].includes(path.extname(filePath))) return;
+
+    console.log(`🔄 Changed: ${filePath}`);
+    const relativePath = path.relative(inputDir, filePath);
 
     for (const moduleType of moduleTypes) {
-      const moduleOutputDir = path.join(outputDir, moduleType)
-      const outputPath = path.join(moduleOutputDir, relativePath)
+      const moduleOutputDir = path.join(outputDir, moduleType);
+      const outputPath = path.join(
+        moduleOutputDir,
+        relativePath.replace(/\.ts$/, '.js')
+      );
 
-      await fs.ensureDir(path.dirname(outputPath))
-      await processFile(filePath, outputPath, moduleType)
+      await fs.ensureDir(path.dirname(outputPath));
+      await processFile(filePath, outputPath, moduleType);
     }
-  })
+  });
 }
 
 async function main() {
-  const args = process.argv.slice(2)
+  const args = process.argv.slice(2);
   const inputDir = args[0],
     outputDir = args[1],
-    isWatchMode = args.includes('--watch')
+    isWatchMode = args.includes('--watch');
   const moduleTypes = args.filter((arg) =>
     ['cjs', 'sysjs', 'amd', 'umd', 'esm'].includes(arg)
-  )
+  );
   const isModuleTypes =
-    '❌ Usage: <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch]'
+    '❌ Usage: <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch]';
 
   moduleTypes.includes('esm') && moduleTypes.length === 1
     ? (console.error(isModuleTypes), process.exit(1))
-    : null
+    : null;
 
-  const resolvedModuleTypes = moduleTypes.length > 0 ? moduleTypes : ['esm']
+  const resolvedModuleTypes = moduleTypes.length > 0 ? moduleTypes : ['esm'];
   !inputDir || !outputDir
     ? (console.error(isModuleTypes), process.exit(1))
-    : null
+    : null;
 
-  console.log('🔄 Starting...')
+  console.log('🔄 Starting...');
   for (const moduleType of resolvedModuleTypes) {
-    console.log(`🔍 Validating: ${moduleType}`)
-    await validateFiles(inputDir)
-    const moduleOutputDir = path.join(outputDir, moduleType)
-    await fs.ensureDir(moduleOutputDir)
-    await buildFiles(inputDir, moduleOutputDir, moduleType)
+    console.log(`🔍 Validating: ${moduleType}`);
+    await validateFiles(inputDir);
+    const moduleOutputDir = path.join(outputDir, moduleType);
+    await fs.ensureDir(moduleOutputDir);
+    await buildFiles(inputDir, moduleOutputDir, moduleType);
   }
 
-  isWatchMode && (await watchAndBuild(inputDir, outputDir, resolvedModuleTypes))
+  isWatchMode &&
+    (await watchAndBuild(inputDir, outputDir, resolvedModuleTypes));
 }
-main()
+main();
