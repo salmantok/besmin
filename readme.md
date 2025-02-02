@@ -12,9 +12,7 @@ npm install --global besmin
 
 ### Sintaks CLI
 
-```
-besmin <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch]
-```
+`besmin <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch]`
 
 ### Argumen
 
@@ -42,7 +40,7 @@ besmin <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch]
    besmin src dist
    ```
 
-`besmin` membaca file `.js`, melakukan transformasi menggunakan Babel, dan meminifikasi hasilnya dengan Terser. File hasil build disimpan di direktori output secara rekursif.
+`besmin` membaca file `.js` dan `.ts`, melakukan transformasi menggunakan Babel, dan meminifikasi hasilnya dengan Terser. File hasil build disimpan di direktori output secara rekursif.
 
 Jika mode `--watch` diaktifkan, `besmin` akan memantau perubahan di direktori input dan secara otomatis memvalidasi serta membangun ulang file yang terpengaruh.
 
