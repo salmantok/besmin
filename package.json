@@ -1,6 +1,6 @@
 {
   "name": "besmin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Build ECMAScript Minify",
   "main": "./dist/esm/besmin.js",
   "bin": {
