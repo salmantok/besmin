@@ -12,37 +12,52 @@ npm install --global besmin
 
 ### Sintaks CLI
 
-`besmin <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch]`
+```
+besmin <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch] [--fix]
+```
 
 ### Argumen
 
-- `<inputDir>`: Direktori input yang berisi file `.js`.
+- `<inputDir>`: Direktori input yang berisi file `.js` dan `.ts`.
 - `<outputDir>`: Direktori output untuk file hasil build.
-- `[cjs|umd|amd|sysjs] (or default [esm])`: Format modul yang akan dibangun. Pilih satu atau lebih.
-- `[--watch]`: Mengaktifkan mode pemantauan.
+- `[cjs|umd|amd|sysjs] (or default [esm])`: Format modul yang akan dibangun. Bisa memilih satu atau lebih format.
+- `[--watch]`: Mengaktifkan mode pemantauan perubahan file.
+- `[--fix]`: Hanya melakukan pengecekan sintaks tanpa membangun file.
 
 ### Contoh Penggunaan
 
-1. Build file JavaScript/TypeScript ke format CommonJS (CJS):
+1. Membangun file JavaScript/TypeScript ke format CommonJS (CJS):
    ```bash
    besmin src dist cjs
    ```
-2. Build ke beberapa format modul (default menggunakan ESM jika tidak ada format eksplisit):
+2. Membangun ke beberapa format modul:
    ```bash
    besmin src dist cjs esm umd
    ```
-3. Build dan aktifkan mode pemantauan (watch mode):
+3. Membangun dan mengaktifkan mode pemantauan:
    ```bash
    besmin src dist cjs esm --watch
    ```
-4. Build default ECMAScript modules (ESM):
+4. Membangun dengan format default ECMAScript Modules (ESM):
    ```bash
    besmin src dist
    ```
+5. Mengecek kesalahan sintaks tanpa membangun file:
+   ```bash
+   besmin src --fix
+   ```
+6. Mengecek sintaks secara otomatis saat ada perubahan file:
+   ```bash
+   besmin src --fix --watch
+   ```
 
-`besmin` membaca file `.js` dan `.ts`, melakukan transformasi menggunakan Babel, dan meminifikasi hasilnya dengan Terser. File hasil build disimpan di direktori output secara rekursif.
+### Cara Kerja
 
-Jika mode `--watch` diaktifkan, `besmin` akan memantau perubahan di direktori input dan secara otomatis memvalidasi serta membangun ulang file yang terpengaruh.
+`besmin` membaca file `.js` dan `.ts`, melakukan transformasi menggunakan Babel, dan meminifikasi hasilnya dengan Terser.  
+File hasil build disimpan di direktori output secara rekursif sesuai format modul yang dipilih.
+
+- Jika mode `--watch` diaktifkan, `besmin` akan memantau perubahan di direktori input dan secara otomatis memvalidasi serta membangun ulang file yang terpengaruh.
+- Jika `--fix` digunakan, `besmin` hanya akan memeriksa kesalahan sintaksis tanpa menghasilkan file output. Jika dikombinasikan dengan `--watch`, `besmin` akan terus memantau perubahan dan menjalankan validasi setiap ada perubahan.
 
 ## Dependencies
 

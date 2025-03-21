@@ -75,8 +75,8 @@ async function syntaxWithBabel(inputPath) {
   try {
     const code = await fs.readFile(inputPath, 'utf-8');
     const transformed = transformSync(code, {
-      presets: [[presetEnv, { targets: '> 0.5%' }], '@babel/preset-typescript'],
-      filename: inputPath, // Tambahkan opsi filename di sini
+      presets: [[presetEnv, { targets: '> 0.5%' }], presetTypescript],
+      filename: inputPath,
     });
     transformed?.code ? console.log(`✔ Input OK: ${inputPath}`) : null;
   } catch (err) {
@@ -144,32 +144,71 @@ async function main() {
   const args = process.argv.slice(2);
   const inputDir = args[0],
     outputDir = args[1],
-    isWatchMode = args.includes('--watch');
+    isWatchMode = args.includes('--watch'),
+    isFixMode = args.includes('--fix');
   const moduleTypes = args.filter((arg) =>
     ['cjs', 'sysjs', 'amd', 'umd', 'esm'].includes(arg)
   );
   const isModuleTypes =
-    '❌ Usage: <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch]';
+    '❌ Usage: <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch] [--fix]';
 
-  moduleTypes.includes('esm') && moduleTypes.length === 1
-    ? (console.error(isModuleTypes), process.exit(1))
-    : null;
-
-  const resolvedModuleTypes = moduleTypes.length > 0 ? moduleTypes : ['esm'];
-  !inputDir || !outputDir
-    ? (console.error(isModuleTypes), process.exit(1))
-    : null;
-
-  console.log('🔄 Starting...');
-  for (const moduleType of resolvedModuleTypes) {
-    console.log(`🔍 Validating: ${moduleType}`);
-    await validateFiles(inputDir);
-    const moduleOutputDir = path.join(outputDir, moduleType);
-    await fs.ensureDir(moduleOutputDir);
-    await buildFiles(inputDir, moduleOutputDir, moduleType);
+  if (!inputDir) {
+    console.error(isModuleTypes);
+    process.exit(1);
   }
 
-  isWatchMode &&
-    (await watchAndBuild(inputDir, outputDir, resolvedModuleTypes));
+  console.log('🔄 Starting...');
+
+  if (isFixMode) {
+    console.log('🔍 Running syntax check...');
+    await validateFiles(inputDir);
+
+    if (!isWatchMode) {
+      console.log('✅ Syntax check completed.');
+      process.exit(0);
+    }
+  }
+
+  if (!outputDir) {
+    console.error(isModuleTypes);
+    process.exit(1);
+  }
+
+  const resolvedModuleTypes = moduleTypes.length > 0 ? moduleTypes : ['esm'];
+
+  if (!isFixMode) {
+    for (const moduleType of resolvedModuleTypes) {
+      console.log(`🔍 Validating: ${moduleType}`);
+      await validateFiles(inputDir);
+      const moduleOutputDir = path.join(outputDir, moduleType);
+      await fs.ensureDir(moduleOutputDir);
+      await buildFiles(inputDir, moduleOutputDir, moduleType);
+    }
+  }
+
+  if (isWatchMode) {
+    console.log(`👀 Watching for changes in ${inputDir}...`);
+    chokidar
+      .watch(inputDir, { ignored: /(^|[\/\\])\../, persistent: true })
+      .on('change', async (filePath) => {
+        if (!['.js', '.ts'].includes(path.extname(filePath))) return;
+
+        console.log(`🔄 Changed: ${filePath}`);
+        if (isFixMode) {
+          await syntaxWithBabel(filePath);
+        } else {
+          for (const moduleType of resolvedModuleTypes) {
+            const moduleOutputDir = path.join(outputDir, moduleType);
+            const outputPath = path.join(
+              moduleOutputDir,
+              path.relative(inputDir, filePath).replace(/\.ts$/, '.js')
+            );
+
+            await fs.ensureDir(path.dirname(outputPath));
+            await processFile(filePath, outputPath, moduleType);
+          }
+        }
+      });
+  }
 }
 main();
