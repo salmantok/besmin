@@ -164,7 +164,6 @@ async function main() {
     await validateFiles(inputDir);
 
     if (!isWatchMode) {
-      console.log('✅ Syntax check completed.');
       process.exit(0);
     }
   }
