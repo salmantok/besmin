@@ -160,7 +160,6 @@ async function main() {
   console.log('🔄 Starting...');
 
   if (isFixMode) {
-    console.log('🔍 Running syntax check...');
     await validateFiles(inputDir);
 
     if (!isWatchMode) {
