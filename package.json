@@ -1,40 +1,40 @@
 {
-    "name": "besmin",
-    "version": "0.0.9",
-    "description": "Build ECMAScript Minify",
-    "main": "./dist/esm/index.js",
-    "bin": {
-        "besmin": "./dist/esm/index.js"
-    },
-    "files": [
-        "./dist/"
-    ],
-    "type": "module",
-    "scripts": {
-        "format": "prettier -w . && impsort && prettier -w .",
-        "build": "besmin lib dist esm cjs",
-        "dev": "pnpm format && pnpm build"
-    },
-    "keywords": [
-        "besmin"
-    ],
-    "author": "salmantok",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/salmantok/besmin.git"
-    },
-    "homepage": "https://github.com/salmantok/besmin#readme",
-    "dependencies": {
-        "@babel/core": "^7.26.0",
-        "@babel/plugin-transform-modules-amd": "^7.25.9",
-        "@babel/plugin-transform-modules-commonjs": "^7.26.3",
-        "@babel/plugin-transform-modules-systemjs": "^7.25.9",
-        "@babel/plugin-transform-modules-umd": "^7.25.9",
-        "@babel/preset-env": "^7.26.0",
-        "@babel/preset-typescript": "^7.26.0",
-        "chokidar": "^4.0.3",
-        "nodefs-lite": "^0.1.7",
-        "terser": "^5.37.0"
-    }
+  "name": "besmin",
+  "version": "0.1.0",
+  "description": "Build ECMAScript Minify",
+  "main": "./dist/esm/index.js",
+  "bin": {
+    "besmin": "./dist/esm/index.js"
+  },
+  "files": [
+    "./dist/"
+  ],
+  "type": "module",
+  "scripts": {
+    "format": "prettier -w . && impsort && prettier -w .",
+    "build": "besmin lib dist esm cjs",
+    "dev": "pnpm format && pnpm build"
+  },
+  "keywords": [
+    "besmin"
+  ],
+  "author": "salmantok",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/salmantok/besmin.git"
+  },
+  "homepage": "https://github.com/salmantok/besmin#readme",
+  "dependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/plugin-transform-modules-amd": "^7.25.9",
+    "@babel/plugin-transform-modules-commonjs": "^7.26.3",
+    "@babel/plugin-transform-modules-systemjs": "^7.25.9",
+    "@babel/plugin-transform-modules-umd": "^7.25.9",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-typescript": "^7.26.0",
+    "chokidar": "^4.0.3",
+    "nodefs-lite": "^0.1.7",
+    "terser": "^5.37.0"
+  }
 }
