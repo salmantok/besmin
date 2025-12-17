@@ -12,9 +12,7 @@ npm install --global besmin
 
 ### Sintaks CLI
 
-```
-besmin <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch] [--fix]
-```
+`besmin <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch] [--fix]`
 
 ### Argumen
 
@@ -27,29 +25,29 @@ besmin <inputDir> <outputDir> [cjs|umd|amd|sysjs] (or default [esm]) [--watch] [
 ### Contoh Penggunaan
 
 1. Membangun file JavaScript/TypeScript ke format CommonJS (CJS):
-   ```bash
-   besmin src dist cjs
-   ```
+    ```bash
+    besmin src dist cjs
+    ```
 2. Membangun ke beberapa format modul:
-   ```bash
-   besmin src dist cjs esm umd
-   ```
+    ```bash
+    besmin src dist cjs esm umd
+    ```
 3. Membangun dan mengaktifkan mode pemantauan:
-   ```bash
-   besmin src dist cjs esm --watch
-   ```
+    ```bash
+    besmin src dist cjs esm --watch
+    ```
 4. Membangun dengan format default ECMAScript Modules (ESM):
-   ```bash
-   besmin src dist
-   ```
+    ```bash
+    besmin src dist
+    ```
 5. Mengecek kesalahan sintaks tanpa membangun file:
-   ```bash
-   besmin src --fix
-   ```
+    ```bash
+    besmin src --fix
+    ```
 6. Mengecek sintaks secara otomatis saat ada perubahan file:
-   ```bash
-   besmin src --fix --watch
-   ```
+    ```bash
+    besmin src --fix --watch
+    ```
 
 ### Cara Kerja
 
@@ -61,7 +59,7 @@ File hasil build disimpan di direktori output secara rekursif sesuai format modu
 
 ## Dependencies
 
-- [**fs-extra**](https://github.com/jprichardson/node-fs-extra): Operasi file yang diperluas.
+- [**@nodefs-lite**](https://github.com/salmantok/nodefs-lite): Operasi file yang diperluas.
 - [**@babel/core**](https://babel.dev/): Alat transformasi kode modern.
 - [**@babel/preset-env**](https://babel.dev/docs/babel-preset-env): Preset untuk mendukung target lingkungan tertentu.
 - [**@babel/preset-typescript**](https://babel.dev/docs/babel-preset-typescript): Preset untuk mendukung TypeScript.
