@@ -30,11 +30,11 @@ npm install --global besmin
     ```
 2. Membangun ke beberapa format modul:
     ```bash
-    besmin src dist cjs esm umd
+    besmin src dist cjs mjs umd
     ```
 3. Membangun dan mengaktifkan mode pemantauan:
     ```bash
-    besmin src dist cjs esm --watch
+    besmin src dist cjs mjs --watch
     ```
 4. Membangun dengan format default ECMAScript Modules (ESM):
     ```bash
